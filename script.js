@@ -2,9 +2,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const initializeSlider = (container) => {
         const beforeImage = container.querySelector('img[data-image="1"]');
         const afterImage = container.querySelector('img[data-image="2"]');
-        const labels = container.querySelector('.labels');
+        const labels = container.querySelector('.lbls');  // Updated label class
 
-        // Hide the labels when JS is enabled
         if (labels) {
             labels.style.display = 'none';
         }
@@ -15,7 +14,13 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Maintain aspect ratio based on beforeImage dimensions
+        const setResponsiveSize = () => {
+            const aspectRatio = beforeImage.naturalHeight / beforeImage.naturalWidth;
+            const containerWidth = container.clientWidth || beforeImage.naturalWidth;
+            container.style.width = `${containerWidth}px`;
+            container.style.height = `${containerWidth * aspectRatio}px`;
+        };
+
         container.style.position = 'relative';
         container.style.overflow = 'hidden';
         container.style.borderRadius = '15px';
@@ -24,8 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
         beforeImage.style.position = 'absolute';
         beforeImage.style.top = '0';
         beforeImage.style.left = '0';
-        container.style.width = `${beforeImage.naturalWidth}px`;
-        container.style.height = `${beforeImage.naturalHeight}px`;
+        beforeImage.style.width = '100%';
+        beforeImage.style.height = '100%';
         beforeImage.style.objectFit = 'cover';
         beforeImage.style.userSelect = 'none';
         beforeImage.style.pointerEvents = 'none';
@@ -134,22 +139,25 @@ document.addEventListener('DOMContentLoaded', function () {
             if (e.key === 'ArrowLeft') { offsetX -= 10; } else if (e.key === 'ArrowRight') { offsetX += 10; }
             if (offsetX < 0) offsetX = 0;
             if (offsetX > rect.width) offsetX = rect.width;
-    
+
             const percentage = (offsetX / rect.width) * 100;
-    
+
             slider.style.transition = 'left 0.2s ease';
             afterImage.style.transition = 'clip-path 0.2s ease';
             slider.style.left = `${percentage}%`;
             afterImage.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
         });
+
+        setResponsiveSize();
+        window.addEventListener('resize', setResponsiveSize);
     };
-    
+
     const initMySlide = (el) => {
         const containers = document.querySelectorAll(el);
         containers.forEach(container => {
             const beforeImage = container.querySelector('img[data-image="1"]');
             const afterImage = container.querySelector('img[data-image="2"]');
-    
+
             if (beforeImage.complete && afterImage.complete) {
                 initializeSlider(container);
             } else {
@@ -157,6 +165,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     };
-    
+
     initMySlide('[data-component="beforeafterslider"]');
-});  
+});
