@@ -1,30 +1,27 @@
 document.addEventListener('DOMContentLoaded', function () {
     const initializeSlider = (container) => {
+        if (container.dataset.initSlider) {
+            return;
+        }
+
+        container.dataset.initSlider = 1;
+
         const beforeImage = container.querySelector('img[data-image="1"]');
         const afterImage = container.querySelector('img[data-image="2"]');
-        const labels = container.querySelector('.lbls');  // Updated label class
+        const labels = container.querySelector('.acbaslider__labels');
 
+        // Hide labels when JavaScript is enabled
         if (labels) {
             labels.style.display = 'none';
         }
 
         if (!beforeImage || !afterImage) return;
 
-        if (container.querySelector('.slider')) {
-            return;
-        }
-
-        const setResponsiveSize = () => {
-            const aspectRatio = beforeImage.naturalHeight / beforeImage.naturalWidth;
-            const containerWidth = container.clientWidth || beforeImage.naturalWidth;
-            container.style.width = `${containerWidth}px`;
-            container.style.height = `${containerWidth * aspectRatio}px`;
-        };
-
+        // Dynamic styling applied by JS
         container.style.position = 'relative';
         container.style.overflow = 'hidden';
-        container.style.borderRadius = '15px';
-        container.style.boxShadow = '0px 8px 20px rgba(0, 0, 0, 0.2)';
+        container.style.borderRadius = '15px'; // Add border-radius dynamically
+        container.style.boxShadow = '0px 8px 20px rgba(0, 0, 0, 0.2)'; // Add box-shadow dynamically
 
         beforeImage.style.position = 'absolute';
         beforeImage.style.top = '0';
@@ -32,9 +29,6 @@ document.addEventListener('DOMContentLoaded', function () {
         beforeImage.style.width = '100%';
         beforeImage.style.height = '100%';
         beforeImage.style.objectFit = 'cover';
-        beforeImage.style.userSelect = 'none';
-        beforeImage.style.pointerEvents = 'none';
-        beforeImage.draggable = false;
 
         afterImage.style.position = 'absolute';
         afterImage.style.top = '0';
@@ -44,12 +38,16 @@ document.addEventListener('DOMContentLoaded', function () {
         afterImage.style.objectFit = 'cover';
         afterImage.style.clipPath = 'inset(0 50% 0 0)';
         afterImage.style.transition = 'clip-path 0.4s ease-in-out';
-        afterImage.style.userSelect = 'none';
-        afterImage.style.pointerEvents = 'none';
-        afterImage.draggable = false;
 
-        const slider = document.createElement('div');
-        slider.className = 'slider';
+        const setResponsiveSize = () => {
+            const aspectRatio = beforeImage.naturalHeight / beforeImage.naturalWidth;
+            const containerWidth = container.clientWidth || beforeImage.naturalWidth;
+            container.style.width = `${containerWidth}px`;
+            container.style.height = `${containerWidth * aspectRatio}px`;
+            afterImage.style.clipPath = 'inset(0 50% 0 0)';
+        };
+
+        let slider = document.createElement('div');
         slider.style.position = 'absolute';
         slider.style.top = '0';
         slider.style.left = '50%';
@@ -60,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
         slider.style.cursor = 'pointer';
         slider.style.transition = 'left 0.2s ease-in-out';
 
-        const handle = document.createElement('div');
+        let handle = document.createElement('div');
         handle.style.position = 'absolute';
         handle.style.top = '50%';
         handle.style.left = '50%';
@@ -72,8 +70,6 @@ document.addEventListener('DOMContentLoaded', function () {
         handle.style.border = '3px solid #888';
         handle.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.7)';
         handle.style.transition = 'box-shadow 0.3s ease-in-out';
-        slider.appendChild(handle);
-
         handle.addEventListener('mouseenter', () => {
             handle.style.boxShadow = '0 0 30px rgba(255, 255, 255, 1)';
         });
@@ -81,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
             handle.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.7)';
         });
 
+        slider.appendChild(handle);
         container.appendChild(slider);
 
         let isDragging = false;
@@ -128,22 +125,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.addEventListener('touchend', stopDragging);
 
-        slider.style.transition = 'left 0.2s ease';
-        afterImage.style.transition = 'clip-path 0.2s ease';
-
         slider.tabIndex = 0;
         slider.addEventListener('keydown', (e) => {
-            const rect = container.getBoundingClientRect();
-            let offsetX = slider.offsetLeft;
+            let percentage = parseFloat(slider.style.left) || 50;
 
-            if (e.key === 'ArrowLeft') { offsetX -= 10; } else if (e.key === 'ArrowRight') { offsetX += 10; }
-            if (offsetX < 0) offsetX = 0;
-            if (offsetX > rect.width) offsetX = rect.width;
+            if (e.key === 'ArrowLeft') {
+                percentage = Math.max(0, percentage - 5);
+            }
 
-            const percentage = (offsetX / rect.width) * 100;
+            if (e.key === 'ArrowRight') {
+                percentage = Math.min(100, percentage + 5);
+            }
 
-            slider.style.transition = 'left 0.2s ease';
-            afterImage.style.transition = 'clip-path 0.2s ease';
             slider.style.left = `${percentage}%`;
             afterImage.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
         });
@@ -154,6 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const initMySlide = (el) => {
         const containers = document.querySelectorAll(el);
+
         containers.forEach(container => {
             const beforeImage = container.querySelector('img[data-image="1"]');
             const afterImage = container.querySelector('img[data-image="2"]');

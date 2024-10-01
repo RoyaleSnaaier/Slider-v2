@@ -1,7 +1,7 @@
 body {
-    background: rgb(139,139,139);
-    background: radial-gradient(circle, rgba(139,139,139,1) 0%, rgba(126,126,126,1) 100%);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background: rgb(139, 139, 139);
+    background: radial-gradient(circle, rgb(139, 139, 139) 0%, rgb(126, 126, 126) 100%);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     color: #ffffff;
     margin: 0;
     padding: 0;
@@ -9,9 +9,9 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-}
-
-main {
+  }
+  
+  main {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -19,48 +19,81 @@ main {
     gap: 20px;
     width: 80%;
     max-width: 100vw;
-    margin: 0 auto;
-    margin: 20px;
-
-
+    margin: 20px auto;
+  
     @media (max-width: 768px) {
-        width: 100%; 
+      width: 100%;
     }
-}
-
-.sldr {
+  }
+  
+  .acbaslider {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
-    padding-top: 0;
-    aspect-ratio: 0;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: fit-content;
 
-    img {
-        width: 100%; 
-        height: auto;
-        user-select: none; 
-        pointer-events: none;
+    &__wrapper {
+      display: flex;
+      width: 100%;
+      position: relative;
     }
-
-    .lbls {
-        display: flex;
-        align-items: center;
-        font-weight: bold;
-        color: #ffffff;
+  
+    &__images__img {
+      width: 50%;
+      height: 100%;
+      object-fit: cover;
+      user-select: none;
+      pointer-events: none;
+      transition: opacity 0.4s ease-in-out;
+  
+      &--before {
+        float: left;
+        z-index: 1;
+      }
+  
+      &--after {
+        float: right;
+        z-index: 2;
+      }
+    }
+  
+    &__divider {
+      width: 2px;
+      height: 100%;
+      background-color: #ffffff;
+      z-index: 3;
+      position: absolute;
+      top: 0;
+      left: 50%;
+    }
+  
+    &__labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.1rem;
+      padding: 10px;
+      margin-top: 10px;
+  
+      &__before,
+      &__after {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 5px 10px;
+        border-radius: 10px;
+      }
+  
+      &__separator {
         width: 100%;
-        margin-top: 10px;
-        text-transform: uppercase;
-
-        @media (max-width: 768px) {
-            font-size: 14px; 
-        }
-    }
-
-    .sep {
-        flex: 1;
         height: 2px;
         background-color: #ffffff;
         margin: 0 10px;
+      }
     }
-}
+  }
+  

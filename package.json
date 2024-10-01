@@ -1,0 +1,16 @@
+{
+  "name": "acbaslider",
+  "version": "1.0.0",
+  "description": "Before After Slider in a WordPress Gutenberg block",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sass" : "sass style.scss index.css --watch",
+    "sass-production" : "sass style.scss index.css  --style=compressed "
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "sass": "^1.79.4"
+  }
+}
