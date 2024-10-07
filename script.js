@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const initializeSlider = (container) => {
+    const initializeSlider = (container, defaultConfig = {}) => {
         if (container.dataset.initSlider) {
             return;
         }
@@ -9,76 +9,63 @@ document.addEventListener('DOMContentLoaded', function () {
         const beforeImage = container.querySelector('img[data-image="1"]');
         const afterImage = container.querySelector('img[data-image="2"]');
         const labels = container.querySelector('.acbaslider__labels');
+        const config = {
+            step: 5,
+            startPosition: defaultConfig.startPosition || 50  
+        };
 
-        // Hide labels when JavaScript is enabled
         if (labels) {
             labels.style.display = 'none';
         }
 
         if (!beforeImage || !afterImage) return;
 
-        // Dynamic styling applied by JS
-        container.style.position = 'relative';
-        container.style.overflow = 'hidden';
-        container.style.borderRadius = '15px'; // Add border-radius dynamically
-        container.style.boxShadow = '0px 8px 20px rgba(0, 0, 0, 0.2)'; // Add box-shadow dynamically
-
-        beforeImage.style.position = 'absolute';
-        beforeImage.style.top = '0';
-        beforeImage.style.left = '0';
-        beforeImage.style.width = '100%';
-        beforeImage.style.height = '100%';
-        beforeImage.style.objectFit = 'cover';
-
-        afterImage.style.position = 'absolute';
-        afterImage.style.top = '0';
-        afterImage.style.left = '0';
-        afterImage.style.width = '100%';
-        afterImage.style.height = '100%';
-        afterImage.style.objectFit = 'cover';
-        afterImage.style.clipPath = 'inset(0 50% 0 0)';
-        afterImage.style.transition = 'clip-path 0.4s ease-in-out';
-
         const setResponsiveSize = () => {
+            if (!beforeImage.naturalWidth || !beforeImage.naturalHeight) {
+                console.log("Images are not fully loaded yet.");
+                return;
+            }
+
             const aspectRatio = beforeImage.naturalHeight / beforeImage.naturalWidth;
             const containerWidth = container.clientWidth || beforeImage.naturalWidth;
-            container.style.width = `${containerWidth}px`;
-            container.style.height = `${containerWidth * aspectRatio}px`;
-            afterImage.style.clipPath = 'inset(0 50% 0 0)';
+
+            if (!containerWidth) {
+                console.log("Container width is 0, setting default size.");
+                container.style.width = '100%';
+            }
+
+            const height = containerWidth * aspectRatio;
+            container.style.height = `${height}px`;
+            console.log(`Responsive size set: ${containerWidth}px width, ${height}px height`);
         };
 
+        const initializeResponsiveSize = () => {
+            setResponsiveSize();
+            window.addEventListener('resize', setResponsiveSize);
+        };
+
+        initializeResponsiveSize();
+
+        // Apply dynamic styles to container and images
+        container.style.borderRadius = '15px';
+        container.style.boxShadow = '0px 8px 20px rgba(0, 0, 0, 0.2)';
+
+        // Set the initial position of the divider and image clipping
+        afterImage.style.clipPath = `inset(0 ${100 - config.startPosition}% 0 0)`;
+        afterImage.style.transition = 'clip-path 0.4s ease-in-out';
+
+        // Slider creation
         let slider = document.createElement('div');
-        slider.style.position = 'absolute';
-        slider.style.top = '0';
-        slider.style.left = '50%';
-        slider.style.width = '4px';
-        slider.style.height = '100%';
-        slider.style.backgroundColor = '#fff';
-        slider.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
-        slider.style.cursor = 'pointer';
-        slider.style.transition = 'left 0.2s ease-in-out';
+        slider.className = 'acbaslider__divider';
 
         let handle = document.createElement('div');
-        handle.style.position = 'absolute';
-        handle.style.top = '50%';
-        handle.style.left = '50%';
-        handle.style.transform = 'translate(-50%, -50%)';
-        handle.style.width = '25px';
-        handle.style.height = '25px';
-        handle.style.borderRadius = '50%';
-        handle.style.backgroundColor = '#ffffff';
-        handle.style.border = '3px solid #888';
-        handle.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.7)';
-        handle.style.transition = 'box-shadow 0.3s ease-in-out';
-        handle.addEventListener('mouseenter', () => {
-            handle.style.boxShadow = '0 0 30px rgba(255, 255, 255, 1)';
-        });
-        handle.addEventListener('mouseleave', () => {
-            handle.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.7)';
-        });
+        handle.className = 'acbaslider__divider__handle';
 
         slider.appendChild(handle);
         container.appendChild(slider);
+
+        // Set initial slider position
+        slider.style.left = `${config.startPosition}%`;
 
         let isDragging = false;
 
@@ -127,22 +114,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
         slider.tabIndex = 0;
         slider.addEventListener('keydown', (e) => {
-            let percentage = parseFloat(slider.style.left) || 50;
+            let percentage = parseFloat(slider.style.left) || config.startPosition;
 
             if (e.key === 'ArrowLeft') {
-                percentage = Math.max(0, percentage - 5);
+                percentage = Math.max(0, percentage - config.step);
             }
 
             if (e.key === 'ArrowRight') {
-                percentage = Math.min(100, percentage + 5);
+                percentage = Math.min(100, percentage + config.step);
             }
 
             slider.style.left = `${percentage}%`;
             afterImage.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
         });
 
-        setResponsiveSize();
-        window.addEventListener('resize', setResponsiveSize);
+        if (beforeImage.complete && afterImage.complete) {
+            setResponsiveSize();
+        } else {
+            beforeImage.onload = afterImage.onload = setResponsiveSize;
+        }
+
+        const resizeObserver = new ResizeObserver(setResponsiveSize);
+        resizeObserver.observe(container);
     };
 
     const initMySlide = (el) => {

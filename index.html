@@ -6,20 +6,11 @@
     <title>Before-After Slider</title>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="index.css">
-    <style>
-
-    </style>
 </head>
 <body>
-    <!--
-    1) Zorg dat de container max 100% is
-    2) Aspect ration as CSS property zetten ipv width en height zetten
-    3) Overal juist prefix classes gebruiken -> Zie ook JS
-    4) Inline Style properties van JS naar CSS
-    -->
     <main>
         <div data-component="beforeafterslider" class="acbaslider">
-            <div class="acbaslider__images" style="display: flex; gap: 10px;">
+            <div class="acbaslider__images">
                 <img class="acbaslider__images__img" src="https://picsum.photos/600/400?v=1" data-image="1" alt="Before">
                 <img class="acbaslider__images__img" src="https://picsum.photos/600/400?v=2" data-image="2" alt="After">
             </div>
@@ -29,8 +20,9 @@
                 <span class="acbaslider__labels__label--after">After</span>
             </div>
         </div>
+
         <div data-component="beforeafterslider" class="acbaslider">
-            <div class="acbaslider__images" style="display: flex; gap: 10px;">
+            <div class="acbaslider__images">
                 <img class="acbaslider__images__img" src="https://picsum.photos/300/300?v=3" data-image="1" alt="Before">
                 <img class="acbaslider__images__img" src="https://picsum.photos/300/300?v=4" data-image="2" alt="After">
             </div>
@@ -40,8 +32,9 @@
                 <span class="acbaslider__labels__label--after">After</span>
             </div>
         </div>
-        <di data-component="beforeafterslider" class="acbaslider">
-            <div class="acbaslider__images" style="display: flex; gap: 10px;">
+
+        <div data-component="beforeafterslider" class="acbaslider">
+            <div class="acbaslider__images">
                 <img class="acbaslider__images__img" src="https://picsum.photos/2000/800?v=5" data-image="1" alt="Before">
                 <img class="acbaslider__images__img" src="https://picsum.photos/2000/800?v=6" data-image="2" alt="After">
             </div>
