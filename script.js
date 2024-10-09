@@ -1,5 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const initializeSlider = (container, defaultConfig = {}) => {
+(function () {
+    const initializeSlider = (container, settings = {}) => {
         if (container.dataset.initSlider) {
             return;
         }
@@ -9,10 +9,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const beforeImage = container.querySelector('img[data-image="1"]');
         const afterImage = container.querySelector('img[data-image="2"]');
         const labels = container.querySelector('.acbaslider__labels');
-        const config = {
-            step: 5,
-            startPosition: defaultConfig.startPosition || 50  
-        };
+        
+        const config = Object.assign({
+            step: container.dataset.step || 5,
+            startPosition: container.dataset.startingposition || 50  
+        }, settings);
 
         if (labels) {
             labels.style.display = 'none';
@@ -46,15 +47,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         initializeResponsiveSize();
 
-        // Apply dynamic styles to container and images
         container.style.borderRadius = '15px';
         container.style.boxShadow = '0px 8px 20px rgba(0, 0, 0, 0.2)';
 
-        // Set the initial position of the divider and image clipping
         afterImage.style.clipPath = `inset(0 ${100 - config.startPosition}% 0 0)`;
         afterImage.style.transition = 'clip-path 0.4s ease-in-out';
 
-        // Slider creation
         let slider = document.createElement('div');
         slider.className = 'acbaslider__divider';
 
@@ -64,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function () {
         slider.appendChild(handle);
         container.appendChild(slider);
 
-        // Set initial slider position
         slider.style.left = `${config.startPosition}%`;
 
         let isDragging = false;
@@ -117,11 +114,11 @@ document.addEventListener('DOMContentLoaded', function () {
             let percentage = parseFloat(slider.style.left) || config.startPosition;
 
             if (e.key === 'ArrowLeft') {
-                percentage = Math.max(0, percentage - config.step);
+                percentage = Math.max(0, percentage - parseInt(config.step));
             }
 
             if (e.key === 'ArrowRight') {
-                percentage = Math.min(100, percentage + config.step);
+                percentage = Math.min(100, percentage + parseInt(config.step));
             }
 
             slider.style.left = `${percentage}%`;
@@ -138,20 +135,30 @@ document.addEventListener('DOMContentLoaded', function () {
         resizeObserver.observe(container);
     };
 
-    const initMySlide = (el) => {
-        const containers = document.querySelectorAll(el);
+    document.addEventListener('DOMContentLoaded', function () {
+        const initMySlide = (el) => {
+            const containers = document.querySelectorAll(el);
 
-        containers.forEach(container => {
-            const beforeImage = container.querySelector('img[data-image="1"]');
-            const afterImage = container.querySelector('img[data-image="2"]');
+            containers.forEach(container => {
+                const beforeImage = container.querySelector('img[data-image="1"]');
+                const afterImage = container.querySelector('img[data-image="2"]');
 
-            if (beforeImage.complete && afterImage.complete) {
-                initializeSlider(container);
-            } else {
-                beforeImage.onload = afterImage.onload = () => initializeSlider(container);
-            }
-        });
-    };
+                const config = {};
 
-    initMySlide('[data-component="beforeafterslider"]');
-});
+                ['step','startingPosition'].forEach( prop => {
+                    if( container.dataset[prop]){
+                        config[prop] = container.dataset[prop];
+                    }
+                })
+
+                if (beforeImage.complete && afterImage.complete) {
+                    initializeSlider(container,config);
+                } else {
+                    beforeImage.onload = afterImage.onload = () => initializeSlider(container,config);
+                }
+            });
+        };
+
+        initMySlide('[data-component="beforeafterslider"]');
+    });
+})();

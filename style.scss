@@ -1,6 +1,4 @@
 body {
-    background: rgb(139, 139, 139);
-    background: radial-gradient(circle, rgb(139, 139, 139) 0%, rgb(126, 126, 126) 100%);
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     color: #ffffff;
     margin: 0;
@@ -11,7 +9,7 @@ body {
     min-height: 100vh;
   }
   
-  main {
+  .entry-content  {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -24,12 +22,20 @@ body {
   
   .acbaslider {
     $slider: &;
-    --acbaslider-divider-color: #fff;
-    --acbaslider-separator-color: #fff;
-    --acbaslider-divider-box-shadow:  0 0 10px rgba(255, 255, 255, 0.8);
-    --acbaslider-divider-tranition: left 0.2s ease-in-out;
-    --acbaslider-devider-handle-box-shadow: 0 0 20px rgba(255, 255, 255, 1);
-
+    --acbaslider-divider-color: #c0c0c0;
+    --acbaslider-divider-handle-color: #fff;
+    --acbaslider-divider-handle-border-color: #888;
+    --acbaslider-divider-handle-box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+    --acbaslider-divider-handle-border-radius: 50%;
+    --acbaslider-divider-handle-transition: box-shadow 0.3s ease-in-out;
+    --acbaslider-separator-color: #000000;
+    --acbaslider-before-after-tag: #000000;
+    --acbaslider-before-after-font-size: 1.1rem;
+    --acbaslider-divider-box-shadow:  0 0 0px rgba(255, 255, 255, 0);
+    --acbaslider-divider-tranition: left 0s ease-in-out;
+    --acbaslider-devider-handle-box-shadow: 0 0 20px rgba(255, 255, 255, 0);
+    --abcaslider-container-border-radius: 0px;
+    --acbaslider-container-box-shadow: 0px 0px 0px rgba(255, 255, 255, 0);
 
     display: flex;
     position: relative;
@@ -50,20 +56,10 @@ body {
   
     &__images__img {
       width: 50%;
-      height: 100%;
+      height: auto;
       object-fit: cover; 
       user-select: none;
       pointer-events: none;
-  
-      &--before {
-        float: left;
-        z-index: 1;
-      }
-  
-      &--after {
-        float: right;
-        z-index: 2;
-      }
     }
   
     &__labels {
@@ -72,14 +68,9 @@ body {
       align-items: center;
       width: 100%;
       font-weight: bold;
-      font-size: 1.1rem;
       padding: 10px;      
-  
-      &__before,
-      &__after {
-        padding: 5px 10px;
-        border-radius: 10px;
-      }
+      font-size: var(--acbaslider-before-after-font-size);
+      color: var(--acbaslider-before-after-tag);
   
       &__separator {
         width: 100%;
@@ -107,18 +98,20 @@ body {
       transform: translate(-50%, -50%);
       width: 25px;
       height: 25px;
-      border-radius: 50%;
-      background-color: #ffffff;
-      border: 3px solid #888;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
-      transition: box-shadow 0.3s ease-in-out;
+      border-radius: var(--acbaslider-divider-handle-border-radius);
+      background-color: var(--acbaslider-divider-handle-color);
+      border: 3px solid var(--acbaslider-divider-handle-border-color);
+      box-shadow: var(--acbaslider-devider-handle-box-shadow);
+      transition: var(--acbaslider-divider-handle-transition);
     }
     &__divider__handle:hover {
       box-shadow: var(--acbaslider-devider-handle-box-shadow);
     }
 
     &[data-init-slider="1"] {
-      background: red;
+      border-radius: var(--abcaslider-container-border-radius);
+      box-shadow: var(--acbaslider-container-box-shadow);
+
       #{$slider}__images__img {
         position: absolute;
         top:0;
@@ -127,4 +120,15 @@ body {
         height: 100%;
       }
     }
+  }
+
+
+  .acbaslider.theme-ac-1 {
+    --acbaslider-divider-color: #fff;
+    --acbaslider-separator-color: #fff;
+    --acbaslider-divider-box-shadow:  0 0 10px rgba(255, 255, 255, 0.8);
+    --acbaslider-divider-tranition: left 0.2s ease-in-out;
+    --acbaslider-devider-handle-box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+    --abcaslider-container-border-radius: 15px;
+    --acbaslider-container-box-shadow: 1px 1px 1px rgba(255,255,25,.5);
   }
