@@ -15,7 +15,7 @@ class AC_Baslider {
     // Enqueue styles and scripts
     public function enqueue_scripts() {
         wp_enqueue_style('acb-index-style', plugin_dir_url(__FILE__) . '../dist/index.css');
-        wp_enqueue_script('acb-script', plugin_dir_url(__FILE__) . '../src/js/script.js', array('jquery'), null, true);
+        wp_enqueue_script('acb-script', plugin_dir_url(__FILE__) . '../dist/baslider.js', array('jquery'), null, true);
     }
 
     // ACF JSON import/export path
