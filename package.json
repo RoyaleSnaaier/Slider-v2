@@ -2,15 +2,20 @@
   "name": "acbaslider",
   "version": "1.0.0",
   "description": "Before After Slider in a WordPress Gutenberg block",
-  "main": "script.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "sass" : "sass style.scss index.css --watch",
-    "sass-production" : "sass style.scss index.css  --style=compressed "
+    "sass": "sass ./src/scss/style.scss ./dist/index.css --watch",
+    "sass-production": "sass ./src/scss/style.scss ./dist/index.css --style=compressed ",
+    "scripts-production": "webpack",
+    "scripts": "webpack --mode=development"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "sass": "^1.79.4"
+    "sass": "^1.79.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.6.3",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4"
   }
 }
