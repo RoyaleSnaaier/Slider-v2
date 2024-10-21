@@ -45,7 +45,8 @@ class AC_Baslider_Block {
         $click_position = get_field('click_position') ?: false;
         $auto_slide = get_field('auto_slide') ?: false;
         $slide_speed = get_field('slide_speed') ?: 3000;
-
+        $floating_labels = get_field('floating_labels') ?: false;
+    
         if ($before_image && $after_image) {
             ?>
             <div 
@@ -57,11 +58,14 @@ class AC_Baslider_Block {
                 data-clickposition="<?php echo esc_attr($click_position ? 'true' : 'false'); ?>"
                 data-autoslide="<?php echo esc_attr($auto_slide ? 'true' : 'false'); ?>" 
                 data-slidespeed="<?php echo esc_attr($slide_speed); ?>"
+                data-floating-labels="<?php echo esc_attr($floating_labels ? 'true' : 'false'); ?>"
             >
                 <div class="acbaslider__images">
                     <img class="acbaslider__images__img" src="<?php echo esc_url($before_image['url']); ?>" data-image="1" alt="<?php _e('Before', 'acbaslider'); ?>">
                     <img class="acbaslider__images__img" src="<?php echo esc_url($after_image['url']); ?>" data-image="2" alt="<?php _e('After', 'acbaslider'); ?>">
                 </div>
+    
+                <!-- Labels for when JS is disabled (always visible) -->
                 <div class="acbaslider__labels">
                     <span class="acbaslider__labels__label --before"><?php _e('Before', 'acbaslider'); ?></span>
                     <div class="acbaslider__labels__separator"></div>
@@ -71,4 +75,4 @@ class AC_Baslider_Block {
             <?php
         }
     }
-}
+}    

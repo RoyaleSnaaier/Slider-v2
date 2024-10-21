@@ -9,6 +9,21 @@
         const beforeImage = container.querySelector<HTMLImageElement>('img[data-image="1"]');
         const afterImage = container.querySelector<HTMLImageElement>('img[data-image="2"]');
         const labels = container.querySelector<HTMLElement>('.acbaslider__labels');
+        let beforeLabel: HTMLSpanElement | null = null;
+        let afterLabel: HTMLSpanElement | null = null;
+        const floatingLabelsEnabled = container.dataset.floatingLabels === 'true';
+        
+        if (floatingLabelsEnabled) {
+            beforeLabel = document.createElement('span');
+            beforeLabel.className = 'acbaslider__floating-label --before';
+            beforeLabel.innerText = 'Before';
+            container.appendChild(beforeLabel);
+
+            afterLabel = document.createElement('span');
+            afterLabel.className = 'acbaslider__floating-label --after';
+            afterLabel.innerText = 'After';
+            container.appendChild(afterLabel);
+        }
 
         const config = Object.assign({
             step: parseInt(container.dataset.step) || 5,
@@ -37,7 +52,6 @@
 
             const height = containerWidth * aspectRatio;
             container.style.height = `${height}px`;
-            console.log(`Responsive size set: ${containerWidth}px width, ${height}px height`);
         };
 
         const initializeResponsiveSize = () => {
@@ -47,12 +61,13 @@
 
         initializeResponsiveSize();
 
-        container.style.borderRadius = '15px';
-        container.style.boxShadow = '0px 8px 20px rgba(0, 0, 0, 0.2)';
+        // Set initial styles for the container if u want to have it dynamic :) (remove the box-radius and box-shadow from the scss!)
+        // container.style.borderRadius = '15px';
+        // container.style.boxShadow = '0px 8px 20px rgba(0, 0, 0, 0.2)';
 
         // Set initial styles for the after image
         afterImage.style.clipPath = `inset(0 ${100 - config.startPosition}% 0 0)`;
-        afterImage.style.transition = 'clip-path 0.3s ease';
+
         let slider = document.createElement('div');
         slider.className = 'acbaslider__divider';
 
@@ -67,30 +82,60 @@
         let isDragging = false;
         let autoSlideInterval: any;
 
-        const updateSliderPosition = (percentage: number, smooth = false) => {
-            if (smooth) {
-                slider.style.transition = 'left 0.3s ease';
-                afterImage.style.transition = 'clip-path 0.3s ease';
-            } else {
-                slider.style.transition = 'none';
-                afterImage.style.transition = 'none';
-            }
+        // Existing function to update slider position
+        const updateSliderPosition = (() => {
+            let lastFrame = 0;
 
-            slider.style.left = `${percentage}%`;
-            afterImage.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
-        };
+            return (percentage: number, smooth = false) => {
+                const now = performance.now();
+                if (now - lastFrame < 16) return;
+                lastFrame = now;
 
-        const onMouseMove = (e: MouseEvent|Touch) => {
-            if (isDragging || config.mouseFollow) {
-                const rect = container.getBoundingClientRect();
-                let offsetX = e.clientX - rect.left;
+                const sliderTransition = smooth ? '0.3s ease' : 'none';
+                const labelTransition = smooth ? '0.36s ease' : 'none';
 
-                offsetX = Math.max(0, Math.min(offsetX, rect.width));
+                const afterImageClipValue = 100 - percentage;
+                const beforeLabelOffset = `calc(${percentage}% - 15%)`;
+                const afterLabelOffset = `calc(${percentage}% + 5%)`;
 
-                const percentage = (offsetX / rect.width) * 100;
-                updateSliderPosition(percentage, true);
-            }
-        };
+                slider.style.transition = sliderTransition;
+                afterImage.style.transition = sliderTransition;
+                slider.style.left = `${percentage}%`;
+                afterImage.style.clipPath = `inset(0 ${afterImageClipValue}% 0 0)`;
+
+                if (floatingLabelsEnabled) {
+                    beforeLabel.style.transition = labelTransition;
+                    afterLabel.style.transition = labelTransition;
+
+                    beforeLabel.style.left = beforeLabelOffset;
+                    afterLabel.style.left = afterLabelOffset;
+                }
+
+                requestAnimationFrame(() => {
+                    if (smooth) {
+                        slider.style.transition = sliderTransition;
+                        afterImage.style.transition = sliderTransition;
+                    } else {
+                        slider.style.transition = 'none';
+                        afterImage.style.transition = 'none';
+                    }
+                });
+            };
+        })();
+
+        // Ensure floating labels update on slider load
+        updateSliderPosition(config.startPosition);
+            const onMouseMove = (e: MouseEvent|Touch) => {
+                if (isDragging || config.mouseFollow) {
+                    const rect = container.getBoundingClientRect();
+                    let offsetX = e.clientX - rect.left;
+
+                    offsetX = Math.max(0, Math.min(offsetX, rect.width));
+
+                    const percentage = (offsetX / rect.width) * 100;
+                    updateSliderPosition(percentage, true);
+                }
+            };
 
         const stopDragging = () => {
             isDragging = false;
@@ -156,7 +201,6 @@
             container.addEventListener('mouseup', resumeAutoSlide);
             container.addEventListener('touchstart', pauseAutoSlide);
             container.addEventListener('touchend', resumeAutoSlide);
-
         }
 
         slider.addEventListener('touchstart', () => {
@@ -204,9 +248,9 @@
             const containers = document.querySelectorAll<HTMLElement>(el);
 
             containers.forEach(container => {
-                const beforeImage: HTMLImageElement|null = container.querySelector<HTMLImageElement>('img[data-image="1"]');
+                const beforeImage: HTMLImageElement | null = container.querySelector<HTMLImageElement>('img[data-image="1"]');
                 const afterImage = container.querySelector<HTMLImageElement>('img[data-image="2"]');
-                const config: {[key:string]: string} = {};
+                const config: { [key: string]: string } = {};
 
                 ['step', 'startingPosition', 'mouseFollow', 'clickPosition', 'autoSlide', 'slideSpeed'].forEach(prop => {
                     if (container.dataset[prop]) {

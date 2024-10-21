@@ -9,7 +9,7 @@ class AC_Baslider {
         // Hook to enqueue scripts and styles
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
         // ACF JSON import/export path
-        add_filter('acf/settings/load_json', [$this, 'acf_json_load_path']);
+        add_filter('.acf-json/block_fields.json', [$this, 'acf_json_load_path']);
     }
 
     // Enqueue styles and scripts
