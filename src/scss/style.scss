@@ -1,25 +1,3 @@
-body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    color: #ffffff;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-  
-  .entry-content  {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 20px;
-    width: 80%;
-    max-width: 100vw;
-    margin: 20px auto;
-  }
-  
   .acbaslider {
     $slider: &;
     --acbaslider-divider-color: #c0c0c0;
@@ -48,7 +26,6 @@ body {
     --acbaslider-before-floating-bg-color: #fe3d6c;
     --acbaslider-after-floating-bg-color: #02abab;
 
-
     display: flex;
     position: relative;
     overflow: hidden;
@@ -57,8 +34,6 @@ body {
     position: relative;
     width: 80%;
     overflow: hidden;
-
-
 
     &__images {
       display: flex;
@@ -121,7 +96,6 @@ body {
       box-shadow: var(--acbaslider-devider-handle-box-shadow);
     }
     
-
     &__floating-label {
       position: absolute;
       top: 50%;
