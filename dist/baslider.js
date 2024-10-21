@@ -58,7 +58,6 @@
         // Set initial styles for the container if u want to have it dynamic :) (remove the box-radius and box-shadow from the scss!)
         // container.style.borderRadius = '15px';
         // container.style.boxShadow = '0px 8px 20px rgba(0, 0, 0, 0.2)';
-        // Set initial styles for the after image
         afterImage.style.clipPath = "inset(0 ".concat(100 - config.startPosition, "% 0 0)");
         var slider = document.createElement('div');
         slider.className = 'acbaslider__divider';
@@ -72,14 +71,19 @@
         // Existing function to update slider position
         var updateSliderPosition = (function () {
             var lastFrame = 0;
-            return function (percentage, smooth) {
+            return function (percentage, smooth, isClick) {
                 if (smooth === void 0) { smooth = false; }
+                if (isClick === void 0) { isClick = false; }
                 var now = performance.now();
                 if (now - lastFrame < 16)
                     return;
                 lastFrame = now;
-                var sliderTransition = smooth ? '0.3s ease' : 'none';
-                var labelTransition = smooth ? '0.36s ease' : 'none';
+                var clickTransitionDuration = '0.3s ease';
+                var defaultTransitionDuration = '0.05s ease';
+                var sliderTransition = smooth
+                    ? (isClick ? clickTransitionDuration : defaultTransitionDuration)
+                    : 'none';
+                var labelTransition = smooth ? '0.07s ease' : 'none';
                 var afterImageClipValue = 100 - percentage;
                 var beforeLabelOffset = "calc(".concat(percentage, "% - 15%)");
                 var afterLabelOffset = "calc(".concat(percentage, "% + 5%)");
@@ -93,16 +97,6 @@
                     beforeLabel.style.left = beforeLabelOffset;
                     afterLabel.style.left = afterLabelOffset;
                 }
-                requestAnimationFrame(function () {
-                    if (smooth) {
-                        slider.style.transition = sliderTransition;
-                        afterImage.style.transition = sliderTransition;
-                    }
-                    else {
-                        slider.style.transition = 'none';
-                        afterImage.style.transition = 'none';
-                    }
-                });
             };
         })();
         // Ensure floating labels update on slider load
@@ -133,7 +127,7 @@
                 var rect = container.getBoundingClientRect();
                 var offsetX = e.clientX - rect.left;
                 var percentage = (offsetX / rect.width) * 100;
-                updateSliderPosition(percentage, true);
+                updateSliderPosition(percentage, true, true);
             });
         }
         // Automatic sliding feature

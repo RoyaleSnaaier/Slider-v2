@@ -65,7 +65,6 @@
         // container.style.borderRadius = '15px';
         // container.style.boxShadow = '0px 8px 20px rgba(0, 0, 0, 0.2)';
 
-        // Set initial styles for the after image
         afterImage.style.clipPath = `inset(0 ${100 - config.startPosition}% 0 0)`;
 
         let slider = document.createElement('div');
@@ -86,13 +85,18 @@
         const updateSliderPosition = (() => {
             let lastFrame = 0;
 
-            return (percentage: number, smooth = false) => {
+            return (percentage: number, smooth = false, isClick = false) => {
                 const now = performance.now();
                 if (now - lastFrame < 16) return;
                 lastFrame = now;
 
-                const sliderTransition = smooth ? '0.3s ease' : 'none';
-                const labelTransition = smooth ? '0.36s ease' : 'none';
+                const clickTransitionDuration = '0.3s ease'; 
+                const defaultTransitionDuration = '0.05s ease';
+
+                const sliderTransition = smooth
+                    ? (isClick ? clickTransitionDuration : defaultTransitionDuration)
+                    : 'none';
+                const labelTransition = smooth ? '0.07s ease' : 'none';
 
                 const afterImageClipValue = 100 - percentage;
                 const beforeLabelOffset = `calc(${percentage}% - 15%)`;
@@ -110,18 +114,9 @@
                     beforeLabel.style.left = beforeLabelOffset;
                     afterLabel.style.left = afterLabelOffset;
                 }
-
-                requestAnimationFrame(() => {
-                    if (smooth) {
-                        slider.style.transition = sliderTransition;
-                        afterImage.style.transition = sliderTransition;
-                    } else {
-                        slider.style.transition = 'none';
-                        afterImage.style.transition = 'none';
-                    }
-                });
             };
         })();
+
 
         // Ensure floating labels update on slider load
         updateSliderPosition(config.startPosition);
@@ -157,9 +152,11 @@
                 const rect = container.getBoundingClientRect();
                 let offsetX = e.clientX - rect.left;
                 const percentage = (offsetX / rect.width) * 100;
-                updateSliderPosition(percentage, true);
+        
+                updateSliderPosition(percentage, true, true);
             });
         }
+        
 
         // Automatic sliding feature
         const startAutoSlide = () => {
